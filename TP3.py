@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import Rotaciones as Rot
 import matplotlib.image as mpimg
 np.set_printoptions(formatter={'float': lambda x: "{0:0.2f}".format(x)})
 
