@@ -1,0 +1,38 @@
+#
+# Generated backup file, do not edit.
+#
+# Originally at: D:\Facultad Ingenieria\Robotica\Robotica-2020\Laboratorio\Tp1\Virtual Controllers\TEMP\62bb1a6f-9246-4906-88a7-0a44ded53053\backup.489359
+# 2020-12-08  21:50:56
+#
+>>SYSTEM_ID:
+VIRTUAL_USE
+
+>>PRODUCTS_ID:
+RobotWare Version: 6.11.02.00
+
+  RobotWare Base
+  English
+  Drive System IRB 120/140/260/360/910SC/1200/1400/1520/1600/1660ID
+  ADU-790A in position X3
+  ADU-790A in position Y3
+  ADU-790A in position Z3
+  IRB 140-6/0.8
+
+>>HOME:
+All public files and directories
+
+>>SYSPAR:
+SYS.cfg
+PROC.cfg
+MMC.cfg
+EIO.cfg
+SIO.cfg
+MOC.cfg
+
+
+>>TASK1: (T_ROB1,,)
+SYSMOD\user.sys @ 
+PROGMOD\Module1.mod @ 
+
+
+>>EOF:
