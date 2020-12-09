@@ -1,4 +1,6 @@
 import numpy as np
+from scipy.spatial.transform import Rotation
+
 
 
 def RotZ(theta):
@@ -50,22 +52,25 @@ def ang2rad(*ang):
     res = []
     for x in ang:
         res.append( x*np.pi/180 )
-    return res
+    return np.array(res)
+    # return res
 
 
 def rad2ang(*rad):
     res = []
     for x in rad:
         res.append( x*180/np.pi )
-    return res
+    return np.array(res)
 
-def shift360(angulo):
-    while 0<=angulo<=360:
-        if angulo > 360:
-            angulo = angulo - 360
-        elif angulo < 0:
-            angulo = angulo + 360
-    return angulo
+def shift360(q,angulos = '[0,2pi]'):
+    #Paso q a [0,1]
+    cdadVueltas = np.floor(q/(2*np.pi))
+    q = q-cdadVueltas*2*np.pi #q va de [0,2pi]
+    if angulos == '[0,2pi]':
+        return q
+    elif angulos == '[-pi,pi]':
+        q = q*(q<=np.pi)+(q-2*np.pi)*(q>np.pi)
+        return q
 
 
 def cuaternion2KTheta(q):
@@ -77,3 +82,22 @@ def cuaternion2KTheta(q):
         k[1] = qy / np.sin(theta / 2)
         k[2] = qz / np.sin(theta / 2)
     return k, theta
+
+def rmat2rvec(mat):
+    R = Rotation.from_dcm(mat)
+    return R.as_rotvec()
+
+if __name__=='__main__':
+    np.set_printoptions(precision=2)
+    ej =1
+    if ej==1:
+        print "Testing de shift 360"
+        q = np.array([0, 2*np.pi-0.01,-2*np.pi+0.01,100,13])
+        print "q orig:\n",rad2ang(*q),'deg'
+        q = shift360(q,'[0,2pi]')
+        print "q obtenido:\n",rad2ang(*q),'deg'
+        q = shift360(q,'[-pi,pi]')
+        print "q obtenido:\n",rad2ang(*q),'deg'
+        print shift360(1.0001*np.pi,'[-pi,pi]')
+
+
