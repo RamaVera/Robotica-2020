@@ -1,0 +1,71 @@
+MODULE Module1
+        CONST robtarget PosicionInicial:=[[40.062869907,5,350.999997451],[0.09754516,-0.849384972,-0.168953176,0.490392634],[0,2,1,1],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_10:=[[399.876122575,170.7866443,132.337906114],[0.008912565,-0.719405011,-0.69453365,0.000069399],[0,2,3,1],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_20:=[[427.713987214,182.423825838,511.144112895],[0.15413691,0.642318474,0.625246262,0.415615089],[0,2,3,1],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_30:=[[463.185948976,-40.945061339,511.144101517],[0.250584969,0.775091328,0.450265835,0.365651863],[-1,2,3,1],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_40:=[[597.654187124,-53.807206193,617.157465429],[0.010939233,0.861463336,-0.047210077,0.505502189],[-1,2,4,1],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_50:=[[590.340605336,-70.349210278,402.927571231],[0.041348347,0.698419889,-0.07410817,0.710639115],[-1,2,4,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_60:=[[600.000026092,-60.000012764,359.999989525],[0.041443001,0.709709838,-0.074523715,0.699314407],[-1,2,4,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget Target_70:=[[600.000030476,-60.999977936,340.000067673],[0.041443276,0.709709587,-0.074523192,0.699314701],[-1,2,4,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+!***********************************************************
+    !
+    ! M?dulo:  Module1
+    !
+    ! Descripci?n:
+    !   <Introduzca la descripci?n aqu?>
+    !
+    ! Autor: Ramiro
+    !
+    ! Versi?n: 1.0
+    !
+    !***********************************************************
+    
+    
+    !***********************************************************
+    !
+    ! Procedimiento Main
+    !
+    !   Este es el punto de entrada de su programa
+    !
+    !***********************************************************
+    PROC main()
+        Pose_inicial;
+        Agarre_Perno;
+        SetDO DO_Pinza,1;
+        Insertar_Perno;
+        SetDO DO_Pinza,0;
+        Pose_inicial;
+        WaitTime 2;
+        Agarre_Perno_desdePosInicial;
+        SetDO DO_Pinza,1;
+        Guardar_Perno;
+        SetDO DO_Pinza,0;
+        Pose_inicial;
+    ENDPROC
+    PROC Pose_inicial()
+         MoveJ PosicionInicial,v1000,z100,Pinza\WObj:=wobjMesa; 
+    ENDPROC
+    PROC Agarre_Perno()
+        MoveJ Target_10,v100,fine,Pinza\WObj:=wobj0;
+    ENDPROC
+    PROC Agarre_Perno_desdePosInicial()
+          MoveJ Target_70,v1000,fine,Pinza\WObj:=wobj0;
+    ENDPROC
+    PROC Insertar_Perno()
+        MoveJ Target_20,v100,fine,Pinza\WObj:=wobj0;
+        MoveJ Target_30,v100,fine,Pinza\WObj:=wobj0;
+        MoveJ Target_40,v100,fine,Pinza\WObj:=wobj0;
+        MoveJ Target_50,v100,fine,Pinza\WObj:=wobj0;
+        MoveJ Target_60,v100,fine,Pinza\WObj:=wobj0;
+        MoveJ Target_70,v100,fine,Pinza\WObj:=wobj0;
+    ENDPROC
+    PROC Guardar_Perno()
+        MoveJ Target_70,v500,fine,Pinza\WObj:=wobj0;
+        MoveJ Target_60,v500,fine,Pinza\WObj:=wobj0;
+        MoveJ Target_50,v500,fine,Pinza\WObj:=wobj0;
+        MoveJ Target_40,v500,fine,Pinza\WObj:=wobj0;
+        MoveJ Target_30,v500,fine,Pinza\WObj:=wobj0;
+        MoveJ Target_20,v500,fine,Pinza\WObj:=wobj0;
+        MoveJ Target_10,v500,fine,Pinza\WObj:=wobj0;
+    ENDPROC
+ENDMODULE
