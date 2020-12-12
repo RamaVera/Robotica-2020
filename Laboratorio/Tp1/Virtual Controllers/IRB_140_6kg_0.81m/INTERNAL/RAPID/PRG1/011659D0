@@ -7,7 +7,7 @@ MODULE Module1
     PERS wobjdata wobjMesa:=[FALSE,TRUE,"",[[665,5,260],[0,0,0,1]],[[0,0,0],[1,0,0,0]]];
     CONST robtarget PosicionInicial:=[[600,0,600],[0.490392593,-0.168953224,0.849384987,-0.097545151],[-1,0,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
     CONST robtarget AgarrePernoVertical:=[[400,170,130],[0,-0.707106781,0.707106781,0],[0,0,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
-    CONST robtarget AgarrePernoHorizontal:=[[400.000006185,169.999993057,130.000007382],[0.499999998,0.500000003,-0.499999989,0.500000009],[0,-1,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    CONST robtarget AgarrePernoHorizontal:=[[400,170,130],[0.5,0.5,-0.5,0.5],[0,-1,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
     CONST robtarget AgujeroMesa:=[[65,65,0],[0,0.707106781,0.707106781,0],[-1,0,-2,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
 !***********************************************************
     !
@@ -32,12 +32,33 @@ MODULE Module1
     !***********************************************************
     CONST speeddata Velocidad:=v300;
     PROC main() 
+ 
+! ***************************************************************************************
+!                           Descomentar para usar FlexPendant
+! ***************************************************************************************
+!       VAR bool AgarradoHorizontal;
+!       VAR bool AgarradoVertical; 
+!        TPReadFK reg1, "Como debe agarrar el perno?", "Vertical", stEmpty, stEmpty, stEmpty, "Horizontal";
+!        IF     reg1 = 1 THEN
+!            AgarradoHorizontal:= FALSE ;
+!            AgarradoVertical:= NOT AgarradoHorizontal;
+!        ELSEIF reg1 = 5 THEN
+!            AgarradoHorizontal:= TRUE ;
+!            AgarradoVertical:= NOT AgarradoHorizontal;
+!        ELSE
+!        ENDIF
+! ***************************************************************************************
+!                           Descomentar para Debug sin FlexPendant
+! *************************************************************************************** 
+! Definir AgarradoHorizontal como TRUE o FALSE comentando y descomentando la instruccion
+! correspondiente
         !CONST bool AgarradoHorizontal:= FALSE ;
         CONST bool AgarradoHorizontal:= TRUE;
         CONST bool AgarradoVertical:= NOT AgarradoHorizontal;
-    
-        MoversePosInicial;
+!***************************************************************************************
         
+           
+        MoversePosInicial;
         IF      AgarradoHorizontal  THEN  
             MoverseAlPernoHorizontalmente;
             AgarrarPernoHorizontalmente;
@@ -66,8 +87,8 @@ MODULE Module1
     !Descripcion: Mueve el robot a la posicion de agarre del perno
     !para ser agarrado de forma perpendicular
     !Precondicion: Debe estar referido al wobj0
-    !Poscondicion: El robot queda en la posicion [400,170,130] acorde
-    !con la posicion de agarre del perno
+    !Poscondicion: El robot queda en la posicion [400,170,150] acorde
+    !con 20 mm lejos sobre el eje z de la posicion de agarre del perno
     PROC MoverseAlPernoVerticalmente()
         VAR robtarget aux;
         !aux:= RelTool(PosicionInicial, -200, 0, 0);
@@ -84,8 +105,8 @@ MODULE Module1
     !Descripcion: Mueve el robot a la posicion de agarre del perno
     !para ser agarrado de forma horizontal
     !Precondicion: Debe estar referido al wobj0
-    !Poscondicion: El robot queda en la posicion [400,170,130] acorde
-    !con la posicion de agarre del perno
+    !Poscondicion: El robot queda en la posicion [400,190,130] acorde
+    !con 20 mm lejos sobre el eje y la posicion de agarre del perno
     PROC MoverseAlPernoHorizontalmente()
         VAR robtarget aux;
         !aux:= RelTool(PosicionInicial, -200, 0, 0);
@@ -125,9 +146,9 @@ MODULE Module1
         SetDO DO_Pinza,0;
     ENDPROC
 
-    !Descripcion: Suelta el perno y vuelve a definir a la pinza como punta
-    !Precondicion: Se suelta donde el robot quedo anteriormente
-    !Poscondicion: El robot debe cambiar de punta 
+    !Descripcion: Mueve la pinza junto al perno hacia el agujero de la mesa sin soltar el perno
+    !Precondicion: Se debe haber definido previamente Pinza_Perno 
+    !Poscondicion: 
     PROC MoverseAlPunto()
         MoveL Offs(AgarrePernoVertical,0,0,300),Velocidad,fine,Pinza\WObj:=wobj0;
         ConfJ \On;
