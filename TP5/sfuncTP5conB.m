@@ -1,4 +1,4 @@
-function [sys,x0,str,ts,simStateCompliance] = sfuncTP5(t,x,u,flag)
+function [sys,x0,str,ts,simStateCompliance] = sfuncTP5(t,x,u,flag,P,x_init)
 %SFUNTMPL General MATLAB S-Function Template
 %   With MATLAB S-functions, you can define you own ordinary differential
 %   equations (ODEs), discrete system equations, and/or just about
@@ -100,14 +100,10 @@ function [sys,x0,str,ts,simStateCompliance] = sfuncTP5(t,x,u,flag)
 % The following outlines the general structure of an S-function.
 %
 switch flag,
-
-  %%%%%%%%%%%%%%%%%%
-  % Initialization %
-  %%%%%%%%%%%%%%%%%%
   case 0,
-    [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes;
+    [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes(x_init);
   case 1,
-    sys=mdlDerivatives(t,x,u);
+    sys=mdlDerivatives(t,x,u,P);
   case 2,
     sys=mdlUpdate(t,x,u);
   case 3,
@@ -129,40 +125,24 @@ end
 % Return the sizes, initial conditions, and sample times for the S-function.
 %=============================================================================
 %
-function [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes
-
-%
-% call simsizes for a sizes structure, fill it in and convert it to a
-% sizes array.
-%
-% Note that in this example, the values are hard coded.  This is not a
-% recommended practice as the characteristics of the block are typically
-% defined by the S-function parameters.
-%
+function [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes(x_init)
 sizes = simsizes;
 
-sizes.NumContStates  = 0;
+sizes.NumContStates  = 2;
 sizes.NumDiscStates  = 0;
-sizes.NumOutputs     = 0;
-sizes.NumInputs      = 0;
-sizes.DirFeedthrough = 1;
+sizes.NumOutputs     = 2;
+sizes.NumInputs      = 1;
+sizes.DirFeedthrough = 0;
 sizes.NumSampleTimes = 1;   % at least one sample time is needed
 
 sys = simsizes(sizes);
 
-%
-% initialize the initial conditions
-%
-x0  = [];
 
-%
-% str is always an empty matrix
-%
+x0  = x_init;
+
+
 str = [];
 
-%
-% initialize the array of sample times
-%
 ts  = [0 0];
 
 % Specify the block simStateCompliance. The allowed values are:
@@ -180,9 +160,21 @@ simStateCompliance = 'UnknownSimState';
 % Return the derivatives for the continuous states.
 %=============================================================================
 %
-function sys=mdlDerivatives(t,x,u)
+function sys=mdlDerivatives(t,x,u,P)
+x1 = x(1);
+x2 = x(2);
+a = P(1);
+m = P(2);
+g = P(3);
+Iozz = P(4);
+xg = P(5);
+yg = P(6);
+B  = 0.1;
 
-sys = [];
+x1d = x2;
+x2d = (Iozz+2*a*xg*m+a^2*m)^-1*(u-m*g*(cos(x1)*xg-sin(x1)*yg+a*cos(x1))-B*x2);
+sys = [x1d; x2d];
+
 
 % end mdlDerivatives
 
@@ -206,8 +198,8 @@ sys = [];
 %=============================================================================
 %
 function sys=mdlOutputs(t,x,u)
-
-sys = [];
+y=x;
+sys = y;
 
 % end mdlOutputs
 

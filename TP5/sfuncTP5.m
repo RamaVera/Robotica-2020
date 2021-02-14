@@ -1,4 +1,4 @@
-function [sys,x0,str,ts,simStateCompliance] = sfuncTP5(t,x,u,flag)
+function [sys,x0,str,ts,simStateCompliance] = sfuncTP5(t,x,u,flag,P,x_init)
 %SFUNTMPL General MATLAB S-Function Template
 %   With MATLAB S-functions, you can define you own ordinary differential
 %   equations (ODEs), discrete system equations, and/or just about
@@ -101,9 +101,9 @@ function [sys,x0,str,ts,simStateCompliance] = sfuncTP5(t,x,u,flag)
 %
 switch flag,
   case 0,
-    [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes;
+    [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes(x_init);
   case 1,
-    sys=mdlDerivatives(t,x,u);
+    sys=mdlDerivatives(t,x,u,P);
   case 2,
     sys=mdlUpdate(t,x,u);
   case 3,
@@ -125,20 +125,20 @@ end
 % Return the sizes, initial conditions, and sample times for the S-function.
 %=============================================================================
 %
-function [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes
+function [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes(x_init)
 sizes = simsizes;
 
 sizes.NumContStates  = 2;
 sizes.NumDiscStates  = 0;
-sizes.NumOutputs     = 1;
+sizes.NumOutputs     = 2;
 sizes.NumInputs      = 1;
-sizes.DirFeedthrough = 1;
+sizes.DirFeedthrough = 0;
 sizes.NumSampleTimes = 1;   % at least one sample time is needed
 
 sys = simsizes(sizes);
 
 
-x0  = [0 0];
+x0  = x_init;
 
 
 str = [];
@@ -160,9 +160,20 @@ simStateCompliance = 'UnknownSimState';
 % Return the derivatives for the continuous states.
 %=============================================================================
 %
-function sys=mdlDerivatives(t,x,u)
+function sys=mdlDerivatives(t,x,u,P)
+x1 = x(1);
+x2 = x(2);
+a = P(1);
+m = P(2);
+g = P(3);
+Iozz = P(4);
+xg = P(5);
+yg = P(6);
 
-sys = [];
+x1d = x2;
+x2d = (Iozz+2*a*xg*m+a^2*m)^-1*(u-m*g*(cos(x1)*xg-sin(x1)*yg+a*cos(x1)));
+sys = [x1d; x2d];
+
 
 % end mdlDerivatives
 
@@ -186,8 +197,8 @@ sys = [];
 %=============================================================================
 %
 function sys=mdlOutputs(t,x,u)
-
-sys = [];
+y=x;
+sys = y;
 
 % end mdlOutputs
 

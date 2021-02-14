@@ -80,4 +80,107 @@ E_tot
 
 P
 
+break
+%% SIMULINK
+clc;clear all;close all;
 
+colormap('jet')
+for tau_init = [0.1,2,3],
+    sim('simulacion');
+
+    t = simuData.Time;
+    tau = simuData.Data(:,1);
+    q = simuData.Data(:,2);
+    qd = simuData.Data(:,3);
+    
+    figure
+    subplot(3,1,1);
+    plot(t,tau,'linewidth',3)
+    ylabel('tau')
+    subplot(3,1,2);hold on;
+    plot([0,5],[0,0],'--r') %Linea 0grados
+    plot([0,5],[180,180],'--m') %Linea 180grados
+    plot([0,5],[-180,-180],'--m') %Linea -180grados
+    plot(t,q*180/pi,'linewidth',3)
+    ylabel('q[grados]')
+    hold off;
+    grid minor
+    subplot(3,1,3);hold on;
+    plot([0,5],[0,0],'--r') %Linea 0grados
+    plot(t,qd,'linewidth',3)
+    ylabel('w[rad/seg]')
+    xlabel('t[s]')
+    grid minor
+    hold off
+end
+
+break
+
+%% VERIFICACION
+clc;clear all;close all;set(0,'DefaultFigureWindowStyle','docked')
+datos_pendulo;
+t   = datos(:,1);
+q   = datos(:,2);
+qd  = datos(:,3);
+%qdd = datos(:,4);
+tau = datos(:,5);
+
+x_init = datos(1,[2,3]);
+simin = [t,tau];
+sim('verificacion')
+
+t_myModel = simuData.Time;
+tau_myModel = simuData.Data(:,1);
+q_myModel = simuData.Data(:,2);
+qd_myModel = simuData.Data(:,3);
+
+subplot(3,1,1);hold on;
+plot(t,tau)
+plot(t_myModel,tau_myModel)
+ylabel('tau[nm]')
+subplot(3,1,2);hold on;
+plot(t,q)
+plot(t_myModel,q_myModel,'--','linewidth',2)
+ylabel('q[m]')
+legend('datos originales','modelo identificado')
+
+subplot(3,1,3);hold on;
+plot(t,qd)
+plot(t_myModel,qd_myModel,'--','linewidth',2)
+ylabel('qd[m/s]')
+xlabel('t[s]')
+
+%% Repito con Termino disipativo
+clc;clear all;close all;
+%B=0.1;
+colormap('jet')
+for tau_init = [0.1,2,3],
+    sim('simulacionConB');
+
+    t = simuData.Time;
+    tau = simuData.Data(:,1);
+    q = simuData.Data(:,2);
+    qd = simuData.Data(:,3);
+    
+    figure
+    subplot(3,1,1);
+    plot(t,tau,'linewidth',3)
+    ylabel('tau')
+    subplot(3,1,2);hold on;
+    plot([0,5],[0,0],'--r') %Linea 0grados
+    plot([0,5],[180,180],'--m') %Linea 180grados
+    plot([0,5],[-180,-180],'--m') %Linea -180grados
+    plot(t,q*180/pi,'linewidth',3)
+    ylabel('q[grados]')
+    hold off;
+    grid minor
+    subplot(3,1,3);hold on;
+    plot([0,5],[0,0],'--r') %Linea 0grados
+    plot(t,qd,'linewidth',3)
+    ylabel('w[rad/seg]')
+    xlabel('t[s]')
+    grid minor
+    hold off
+end
+
+break
